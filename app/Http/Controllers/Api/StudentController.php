@@ -27,6 +27,10 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
             'course_id' => 'required|exists:courses,id'
         ]);
+
+        $student = Student::create($request->all());
+        
+        return response()->json($student->load('course'), 201);
     }
 
     /**
@@ -34,7 +38,7 @@ class StudentController extends Controller
      */
     public function show(string $id)
     {
-        $student = Student::with('course') ->findOrFail($id);
+        $student = Student::with('course')->findOrFail($id);
         return response()->json($student, 200);
     }
 
@@ -44,9 +48,14 @@ class StudentController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'name'=>'required|string|max:255',
-            'course_id' => 'required|exists:courses_id'
+            'name' => 'required|string|max:255',
+            'course_id' => 'required|exists:courses,id'
         ]);
+
+        $student = Student::findOrFail($id);
+        $student->update($request->all());
+        
+        return response()->json($student->load('course'), 200);
     }
 
     /**
